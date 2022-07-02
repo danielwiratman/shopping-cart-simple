@@ -1,0 +1,40 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "title": "orson",
+      "description": "orson is good",
+      "stock": 100,
+      "price": 10000,
+      "image": "https://picsum.photos/200/200"
+    },
+    {
+      "id": 2,
+      "title": "indomie",
+      "description": "mantap",
+      "stock": 100,
+      "price": 25000,
+      "image": "https://picsum.photos/200/200"
+    }
+  ],
+  "carts": [
+    {
+      "id": 2,
+      "userId": 1,
+      "productId": 2,
+      "total": 6
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "productId": 1,
+      "total": 1
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "name": "kanban"
+    }
+  ]
+}
