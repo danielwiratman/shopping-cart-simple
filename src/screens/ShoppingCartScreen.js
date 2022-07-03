@@ -33,7 +33,7 @@ const ShoppingCartScreen = () => {
     };
 
     const API_URL =
-        "https://aa80-2001-448a-5020-8c11-4c33-c796-f8bd-a7f4.ap.ngrok.io";
+        "https://a372-2001-448a-5020-8c11-c473-47b4-f66d-7c14.ap.ngrok.io";
 
     const getData = () => {
         fetch(`${API_URL}/carts`)
@@ -110,7 +110,6 @@ const ShoppingCartScreen = () => {
         let newData = { ...item, total: total };
         changeCartData(newData);
         getData();
-        updateTotal();
     };
 
     const plusQuantity = (item) => {
@@ -119,7 +118,6 @@ const ShoppingCartScreen = () => {
         let newData = { ...item, total: total };
         changeCartData(newData);
         getData();
-        updateTotal();
     };
 
     const trashButton = (item) => {
@@ -160,13 +158,7 @@ const ShoppingCartScreen = () => {
     };
 
     useEffect(() => {
-        let mounted = true;
-        if (mounted) {
-            getData();
-        }
-        return () => {
-            mounted = false;
-        };
+        getData();
     }, []);
 
     return (
@@ -185,8 +177,8 @@ const ShoppingCartScreen = () => {
                     />
                 }
                 renderItem={({ item }) => {
-                    while(productData.length < 1){
-                        getData()
+                    while (productData.length < 1) {
+                        getData();
                     }
                     const title = productData.filter((data) => {
                         return data.id == item.productId;
@@ -197,7 +189,7 @@ const ShoppingCartScreen = () => {
                     const description = productData.filter((data) => {
                         return data.id == item.productId;
                     })[0].description;
-                    const price = productData.filter((data) => {
+                    const itemPrice = productData.filter((data) => {
                         return data.id == item.productId;
                     })[0].price;
                     let lastStock = item.total == 1;
@@ -212,7 +204,7 @@ const ShoppingCartScreen = () => {
                                     {capitalize(title)}
                                 </Text>
                                 <Text style={styles.priceText}>
-                                    {"Rp" + numberWithCommas(price)}
+                                    {"Rp" + numberWithCommas(itemPrice)}
                                 </Text>
                             </View>
                             <View style={styles.quantityContainer}>
