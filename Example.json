@@ -22,13 +22,13 @@
       "id": 2,
       "userId": 1,
       "productId": 2,
-      "total": 9
+      "total": 2
     },
     {
       "id": 3,
       "userId": 1,
       "productId": 1,
-      "total": 5
+      "total": 7
     }
   ],
   "users": [

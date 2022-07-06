@@ -16,6 +16,14 @@ import {
 } from "react-native-responsive-screen";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
 
+const capitalize = (s) => {
+    return s[0].toUpperCase() + s.slice(1);
+};
+
+const numberWithCommas = (s) => {
+    return s.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 const ShoppingCartScreen = () => {
     const [cartData, setCartData] = useState([]);
     const [userData, setUserData] = useState([]);
@@ -25,17 +33,11 @@ const ShoppingCartScreen = () => {
     const [price, setPrice] = useState(0);
     const [portrait, setPortrait] = useState(true);
 
-    const capitalize = (s) => {
-        return s[0].toUpperCase() + s.slice(1);
-    };
-    const numberWithCommas = (s) => {
-        return s.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    };
 
     const API_URL =
-        "https://a372-2001-448a-5020-8c11-c473-47b4-f66d-7c14.ap.ngrok.io";
+        "https://1b1f-2001-448a-5020-8c11-616b-1962-b7cd-8fe5.ap.ngrok.io";
 
-    const getData = () => {
+    const updateData = () => {
         fetch(`${API_URL}/carts`)
             .then((res) => res.json())
             .then((json) => {
@@ -60,10 +62,29 @@ const ShoppingCartScreen = () => {
             .catch((error) => {
                 console.error(error);
             });
-        updateTotal();
-        let port = Dimensions.get("window").width >= 500 ? false : true;
-        setPortrait(port);
-    };
+        };
+        
+        const updateOrientation = () => {
+            let port = Dimensions.get("window").width >= 500 ? false : true;
+            setPortrait(port);
+        };
+
+        const updateTotal = () => {
+            let newTotal = 0;
+            cartData.map((data) => {
+                newTotal += data.total;
+            });
+            let newPrice = 0;
+            cartData.map((data) => {
+                newPrice +=
+                    data.total *
+                    productData.filter((product) => {
+                        return product.id == data.productId;
+                    })[0].price;
+            });
+            setPrice(newPrice);
+            setTotal(newTotal);
+        };
 
     const changeCartData = (item) => {
         const requestOptions = {
@@ -101,7 +122,7 @@ const ShoppingCartScreen = () => {
         fetch(`${API_URL}/carts`, requestOptions).then((response) =>
             response.json()
         );
-        getData();
+        updateData();
     };
 
     const minusQuantity = (item) => {
@@ -109,7 +130,6 @@ const ShoppingCartScreen = () => {
         total--;
         let newData = { ...item, total: total };
         changeCartData(newData);
-        getData();
     };
 
     const plusQuantity = (item) => {
@@ -117,7 +137,6 @@ const ShoppingCartScreen = () => {
         total++;
         let newData = { ...item, total: total };
         changeCartData(newData);
-        getData();
     };
 
     const trashButton = (item) => {
@@ -132,7 +151,6 @@ const ShoppingCartScreen = () => {
                     text: "Yes",
                     onPress: () => {
                         deleteCartData(item);
-                        getData();
                     },
                 },
             ],
@@ -140,26 +158,15 @@ const ShoppingCartScreen = () => {
         );
     };
 
-    const updateTotal = () => {
-        let newTotal = 0;
-        cartData.map((data) => {
-            newTotal += data.total;
-        });
-        let newPrice = 0;
-        cartData.map((data) => {
-            newPrice +=
-                data.total *
-                productData.filter((product) => {
-                    return product.id == data.productId;
-                })[0].price;
-        });
-        setPrice(newPrice);
-        setTotal(newTotal);
-    };
+    useEffect(() => {
+        Dimensions.addEventListener("change", updateOrientation)
+    })
 
     useEffect(() => {
-        getData();
-    }, []);
+        updateData();
+        updateTotal()
+        console.log("updating")
+    }, [cartData, price, total]);
 
     return (
         <View style={styles.mainContainer}>
@@ -173,12 +180,12 @@ const ShoppingCartScreen = () => {
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
-                        onRefresh={getData}
+                        onRefresh={updateData}
                     />
                 }
                 renderItem={({ item }) => {
                     while (productData.length < 1) {
-                        getData();
+                        updateData();
                     }
                     const title = productData.filter((data) => {
                         return data.id == item.productId;
