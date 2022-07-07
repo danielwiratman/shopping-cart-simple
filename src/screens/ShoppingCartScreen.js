@@ -33,9 +33,8 @@ const ShoppingCartScreen = () => {
     const [price, setPrice] = useState(0);
     const [portrait, setPortrait] = useState(true);
 
-
     const API_URL =
-        "https://1b1f-2001-448a-5020-8c11-616b-1962-b7cd-8fe5.ap.ngrok.io";
+        "https://ad60-2001-448a-5020-8c11-917d-e73-22f3-e974.ap.ngrok.io";
 
     const updateData = () => {
         fetch(`${API_URL}/carts`)
@@ -62,29 +61,29 @@ const ShoppingCartScreen = () => {
             .catch((error) => {
                 console.error(error);
             });
-        };
-        
-        const updateOrientation = () => {
-            let port = Dimensions.get("window").width >= 500 ? false : true;
-            setPortrait(port);
-        };
+    };
 
-        const updateTotal = () => {
-            let newTotal = 0;
-            cartData.map((data) => {
-                newTotal += data.total;
-            });
-            let newPrice = 0;
-            cartData.map((data) => {
-                newPrice +=
-                    data.total *
-                    productData.filter((product) => {
-                        return product.id == data.productId;
-                    })[0].price;
-            });
-            setPrice(newPrice);
-            setTotal(newTotal);
-        };
+    const updateOrientation = () => {
+        let port = Dimensions.get("window").width >= 500 ? false : true;
+        setPortrait(port);
+    };
+
+    const updateTotal = () => {
+        let newTotal = 0;
+        cartData.map((data) => {
+            newTotal += data.total;
+        });
+        let newPrice = 0;
+        cartData.map((data) => {
+            newPrice +=
+                data.total *
+                productData.filter((product) => {
+                    return product.id == data.productId;
+                })[0].price;
+        });
+        setPrice(newPrice);
+        setTotal(newTotal);
+    };
 
     const changeCartData = (item) => {
         const requestOptions = {
@@ -108,7 +107,7 @@ const ShoppingCartScreen = () => {
     };
 
     const addDummyCartData = (productId) => {
-        const lastId = cartData[cartData.length - 1].id;
+        const lastId = cartData.length < 1 ? 1 : cartData[cartData.length - 1].id;
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -123,6 +122,7 @@ const ShoppingCartScreen = () => {
             response.json()
         );
         updateData();
+        updateTotal();
     };
 
     const minusQuantity = (item) => {
@@ -130,6 +130,8 @@ const ShoppingCartScreen = () => {
         total--;
         let newData = { ...item, total: total };
         changeCartData(newData);
+        updateData();
+        updateTotal();
     };
 
     const plusQuantity = (item) => {
@@ -137,6 +139,8 @@ const ShoppingCartScreen = () => {
         total++;
         let newData = { ...item, total: total };
         changeCartData(newData);
+        updateData();
+        updateTotal();
     };
 
     const trashButton = (item) => {
@@ -151,6 +155,8 @@ const ShoppingCartScreen = () => {
                     text: "Yes",
                     onPress: () => {
                         deleteCartData(item);
+                        updateData();
+                        updateTotal();
                     },
                 },
             ],
@@ -159,14 +165,14 @@ const ShoppingCartScreen = () => {
     };
 
     useEffect(() => {
-        Dimensions.addEventListener("change", updateOrientation)
-    })
+        Dimensions.addEventListener("change", updateOrientation);
+    });
 
     useEffect(() => {
         updateData();
-        updateTotal()
-        console.log("updating")
-    }, [cartData, price, total]);
+        updateTotal();
+        console.log("updating");
+    }, [JSON.stringify(cartData), price, total]);
 
     return (
         <View style={styles.mainContainer}>
@@ -264,17 +270,28 @@ const ShoppingCartScreen = () => {
             />
             <View style={styles.dummyButtonContainer}>
                 <Text style={{ fontSize: 16 }}>Dummy Product</Text>
-                <TouchableOpacity
-                    style={{
-                        backgroundColor: "#4CB050",
-                        padding: 8,
-                        borderRadius: 10,
-                    }}
-                    // addDummyCartData(2) untuk product satunya
-                    onPress={() => addDummyCartData(1)}
-                >
-                    <AntDesign name="plus" size={20} color="white" />
-                </TouchableOpacity>
+                <View style={{flexDirection: 'row'}}>
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: "#4CB050",
+                            padding: 8,marginRight:8,
+                            borderRadius: 10,
+                        }}
+                        onPress={() => addDummyCartData(1)}
+                    >
+                        <AntDesign name="plus" size={20} color="white" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: "#4CB050",
+                            padding: 8,
+                            borderRadius: 10,
+                        }}
+                        onPress={() => addDummyCartData(2)}
+                    >
+                        <AntDesign name="plus" size={20} color="white" />
+                    </TouchableOpacity>
+                </View>
             </View>
             <View style={styles.bottomBarContainer}>
                 <View style={styles.cartTotalContainer}>

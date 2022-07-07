@@ -21,14 +21,14 @@
     {
       "id": 2,
       "userId": 1,
-      "productId": 2,
-      "total": 2
+      "productId": 1,
+      "total": 4
     },
     {
       "id": 3,
       "userId": 1,
-      "productId": 1,
-      "total": 7
+      "productId": 2,
+      "total": 2
     }
   ],
   "users": [
